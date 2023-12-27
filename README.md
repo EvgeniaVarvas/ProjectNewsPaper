@@ -84,7 +84,17 @@ author1.update_rating()
 author2.update_rating()
 
 # Вывести имя пользователя и рейтинг лучшего пользователя
-лучший_пользователь = Author.objects.order_by('-rating').first().user
-print(f'Лучший пользователь: {лучший_пользователь.username}, Рейтинг: {лучший_пользователь.author.rating}')
+best_user = Author.objects.order_by('-rating').first().user
+print(f'Лучший пользователь: {best_user.username}, Рейтинг: {best_user.author.rating}')
+
+# Вывести детали лучшей статьи
+best_article = Post.objects.filter(post_type='article').order_by('-rating').first()
+print(f'Дата: {best_article.created}, Автор: {best_article.author.user.username}, Рейтинг: {best_article.rating}, Заголовок: {best_article.title}, Превью: {best_article.preview()}')
+
+# Выводим все комментарии к лучшей статье
+all_comments = Comment.objects.filter(post=best_article)
+for comments in all_comments:
+    print(f'Дата: {comments.created}, Пользователь: {comments.user.username}, Рейтинг: {comments.rating}, Текст: {comments.text}')
+
 
 
