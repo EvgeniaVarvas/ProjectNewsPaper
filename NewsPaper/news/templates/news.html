@@ -1,0 +1,25 @@
+{% extends 'flatpages/default.html' %}  
+
+{% block title%}
+News
+{% endblock title%}
+    
+{% block content %}
+
+    {% if news %}
+        {% for n in news %}
+            
+                <h4>{{ n.title }}</h4>
+                <p>{{ n.created|date:'d F Y' }}</p>
+                <b>{{ n.text|truncatechars:20 }}</b>
+                <a href="{{ n.id }}">Читать далее</a>
+                {% if not forloop.last %}
+                    <hr>
+                {% endif %}
+            
+        {% endfor %}
+    {% else %}
+        <h2>Новостей нет</h2>
+    {% endif %}
+
+{% endblock content %}

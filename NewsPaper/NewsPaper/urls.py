@@ -20,5 +20,12 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('news/', include('news.urls')),
+    path('', include('django.contrib.flatpages.urls')),
+ 
 ]
+# urlpatterns = [
+#     path('admin/', admin.site.urls),
+#     path('', .flatpages_views, {'url': '/index/'}, name='index'),  # Ссылка на flatpage для корневого URL
+#     path('news/', include('news.urls')),  # Ссылка на URL-пути из приложения news
+# ]
 

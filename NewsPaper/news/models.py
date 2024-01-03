@@ -32,7 +32,7 @@ class Post(models.Model):
     rating = models.IntegerField(default=0)
 
     def preview(self):
-        return self.text[:124] + '...'
+        return self.text[:20] + '...'
 
     def like(self):
         self.rating += 1
@@ -43,7 +43,7 @@ class Post(models.Model):
         self.save()
 
     def __str__(self):
-        return f'{self.title}.\n {self.text}\n Автор: {self.author}'    
+        return f'{self.title}. {self.text} Автор: {self.author.user}'
 
 
 class PostCategory(models.Model):
