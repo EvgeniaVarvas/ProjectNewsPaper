@@ -1,25 +1,66 @@
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView
-from .models import Post
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-# Create your views here.
+from .forms import PostForm
+from .models import Author, Post
 
-class NewsList(ListView):
+
+
+class PostListMixin:
     model = Post
-    ordering = '-created'
-    template_name = 'news.html'
-    context_object_name = 'news'
+    post_type_filter = None
+    paginate_by = 10
+
+
+    def get_queryset(self):
+        return Post.objects.filter(post_type=self.post_type_filter).order_by('-created')
+ 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['news'] = context['object_list']  
+        return context
+    
+class NewsList(PostListMixin, ListView):
+    post_type_filter = 'news'
+    template_name = 'common_list.html'
+
+class ArticleList(PostListMixin, ListView):
+    post_type_filter = 'article'
+    template_name = 'common_list.html' 
+
+class PostDetail(DetailView):
+    model = Post
+    template_name = 'post_detail.html'
+    context_object_name = 'post_detail'   
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['news_length'] = self.get_queryset().count()
-        return context
+        context['news'] = context['object']
+        return context    
 
 
-class NewsDetail(DetailView):
-    # Модель всё та же, но мы хотим получать информацию по отдельному товару
+class AuthorMixin:
+    def form_valid(self, form):
+        author_instance, created = Author.objects.get_or_create(user=self.request.user)
+        form.instance.author = author_instance
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('post_detail', kwargs={'pk': self.object.pk})
+    
+class PostCreate(AuthorMixin, CreateView):
     model = Post
-    # Используем другой шаблон — product.html
-    template_name = 'news_detail.html'
-    # Название объекта, в котором будет выбранный пользователем продукт
-    context_object_name = 'news_detail'    
+    form_class = PostForm
+    template_name = 'create_news.html'
+
+class PostUpdate(AuthorMixin, UpdateView):
+    model = Post
+    form_class = PostForm
+    template_name = 'create_news.html'    
+    
+
+class PostDelete(DeleteView):
+    model = Post
+    template_name = 'post_delete.html'
+    success_url = reverse_lazy('news_list')

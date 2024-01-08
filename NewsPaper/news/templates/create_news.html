@@ -1,0 +1,18 @@
+{% extends 'flatpages/default.html' %}  
+{# Импортируем модуль с нашим тегом #}
+
+{% block title%}
+CreateNews
+{% endblock%}
+
+{% block content %}
+<br>
+<h3>Добавить Новость/Статью</h3>
+<hr>
+<br>
+<form method="post" action="">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Добавить</button>
+</form>
+{% endblock %}
