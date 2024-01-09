@@ -1,50 +1,16 @@
-from .models import Post
-from django_filters import FilterSet, DateTimeFilter
-from django.forms import DateTimeInput
+from .models import Category
+from django_filters import FilterSet, DateFilter, CharFilter, ModelChoiceFilter
+from django.forms import DateInput
 
-
-# class PostFilter(FilterSet):
-#     added_after = DateTimeFilter(
-#         field_name='created',
-#         lookup_expr='gt',
-#         widget=DateTimeInput(
-#             format='%Y-%m-%dT%H:%M',
-#             attrs={'type': 'datetime-local'},
-#         ),
-#     )
-#     class Meta:
-#         model = Post
-#         fields = {
-#             'name': ['icontains'],
-#         }
-
-# class PostFilter(FilterSet):
-# class PostFilter(FilterSet):
-#     class Meta:
-#         model = Post
-#         fields = '__all__'
-#         labels = {
-#             'post_type': 'Тип поста',
-#             'created': 'Дата создания',
-#             'categories': 'Категории',
-#             'title': 'Заголовок',
-#             'text': 'Текст',
-#             'rating': 'Рейтинг',
-#         }
 
 class PostFilter(FilterSet):
-    added_after = DateTimeFilter(
-        field_name='created',
+    title = CharFilter(lookup_expr='iregex', label='Заголовок')
+    categories = ModelChoiceFilter(label='Категория', empty_label='Любая', queryset=Category.objects.all())
+    created = DateFilter(
         lookup_expr='gt',
-        widget=DateTimeInput(
-            format='%Y-%m-%dT%H:%M',
-            attrs={'type': 'datetime-local'},
-        ),
+        label='Дата после',
+        widget=DateInput(attrs={'type': 'date'}),
     )
-
-    class Meta:
-        model = Post
-        fields = {
-            'title': ['icontains'],
-        }
+    
+    
        
